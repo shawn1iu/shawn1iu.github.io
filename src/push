@@ -1,0 +1,26 @@
+#! /usr/bin/env bash
+shopt -s extglob
+add() {
+	cd ../
+	rm -r !(src|README.md)
+	cd src
+	hugo
+	mv public/* ../
+	git add -A :/
+}
+
+if [ "$1" = "on" ]; then
+	add
+	git commit -m "write"
+	git fetch origin
+	git rebase origin/master
+	git push origin master
+elif [ "$1" = "sub" ]; then
+	add
+	git commit -m "theme"
+	git fetch origin
+	git rebase origin/master
+	cd ../
+	git subtree push --prefix=src/themes/gindoro git@github.com:netw0rm/gindoro.git master
+	cd src
+fi
